@@ -196,7 +196,7 @@ const Product = () => {
           response = await getData("api/products/all-product");
         }
 
-        console.log("Fetched product response:", response); // Debug log
+        // console.log("Fetched product response:", response); // Debug log
 
         let productsData = [];
 
