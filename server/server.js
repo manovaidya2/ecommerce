@@ -51,8 +51,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://herbs.manovaidya.in",
-  "https://herbsadmin.manovaidya.in",
+  // "https://herbsadmin.manovaidya.in",
   "https://apiherbs.manovaidya.in", 
+  "https://adminherbs.manovaidya.in",
 ];
 
 app.use(
