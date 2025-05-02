@@ -196,10 +196,17 @@ const Product = () => {
           response = await getData("api/products/all-product");
         }
 
-        if (response?.success) {
-          const productsData = response.products || response.subcategory?.productId || [];
-          setProducts(productsData);
+        console.log("Fetched product response:", response); // Debug log
+
+        let productsData = [];
+
+        if (Array.isArray(response?.products)) {
+          productsData = response.products;
+        } else if (Array.isArray(response?.subcategory?.productId)) {
+          productsData = response.subcategory.productId;
         }
+
+        setProducts(productsData);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to fetch products.");
@@ -226,42 +233,46 @@ const Product = () => {
 
   return (
     <div className="row">
-      {products.map((item) => (
-        <div key={item._id} className="col-md-4 col-6 mb-2">
-          <div className="product-slider-card">
-            <Link className="text-black text-decoration-none" href={`/Pages/products/${item?._id}`}>
-              <div data-aos="zoom-in" className="product-card p-0">
-                <img
-                  src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
-                  alt={item.name}
-                  className="product-image"
-                />
-                <div className="product-details">
-                  <h5 className="product-name">{truncateText(item?.productName, 30)}</h5>
-                  <p className="product-desc">
-                    {parse(truncateText(item?.productSubDescription, 90))}
-                  </p>
-                  <div className="product-footer" style={{ justifyContent: 'space-between' }}>
-                    <div className="product-price m-0">
-                      <p className="del-mrp">
-                        MRP: <del>₹ {item?.variant[0]?.price}</del>
-                      </p>
-                      <span className="final-price">
-                        <strong>₹ {item?.variant[0]?.finalPrice}</strong>
-                      </span>
-                    </div>
-                    <p className="off-price m-0">
-                      <b style={{ fontSize: "14px" }}>
-                        {item?.variant[0]?.discountPrice}% off
-                      </b>
+      {Array.isArray(products) && products.length > 0 ? (
+        products.map(item => (
+          <div key={item._id} className="col-md-4 col-6 mb-2">
+            <div className="product-slider-card">
+              <Link className="text-black text-decoration-none" href={`/Pages/products/${item?._id}`}>
+                <div data-aos="zoom-in" className="product-card p-0">
+                  <img
+                    src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
+                    alt={item.name}
+                    className="product-image"
+                  />
+                  <div className="product-details">
+                    <h5 className="product-name">{truncateText(item?.productName, 30)}</h5>
+                    <p className="product-desc">
+                      {parse(truncateText(item?.productSubDescription, 90))}
                     </p>
+                    <div className="product-footer" style={{ justifyContent: 'space-between' }}>
+                      <div className="product-price m-0">
+                        <p className="del-mrp">
+                          MRP: <del>₹ {item?.variant[0]?.price}</del>
+                        </p>
+                        <span className="final-price">
+                          <strong>₹ {item?.variant[0]?.finalPrice}</strong>
+                        </span>
+                      </div>
+                      <p className="off-price m-0">
+                        <b style={{ fontSize: "14px" }}>
+                          {item?.variant[0]?.discountPrice}% off
+                        </b>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <div className="col-12 text-center">No products found.</div>
+      )}
     </div>
   );
 };
