@@ -48,17 +48,11 @@ const __dirname = path.dirname(__filename);
 // Middleware
 
 const allowedOrigins = [
-  // "https://api.manovaidya.com",
   "http://localhost:3000",
   "http://localhost:3001",
-  "http://localhost:3002",
-  // "https://manovaidya.com",
-  // "https://www.manovaidya.com",
-  // "https://admin.manovaidya.com",
   "https://herbs.manovaidya.in",
-  // "https://herbs.manovaidya.in",
   "https://herbsadmin.manovaidya.in",
-
+  "https://apiherbs.manovaidya.in", 
 ];
 
 app.use(
