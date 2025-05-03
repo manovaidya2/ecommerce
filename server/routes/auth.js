@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
-
+// checking 
 // Register a new user
 router.post("/register", async (req, res) => {
   try {
