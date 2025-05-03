@@ -268,16 +268,21 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
   try {
     const { length, breadth, height, weight, id } = req.body;
 
+    // Validate the id as a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, msg: "Invalid order ID" });
+    }
+
     // Fetch order details
     const order = await Order.findById(id)
       .populate("orderItems.productId")
       .populate("user");
+
     if (!order) {
-      return res.status(204).json({ success: false, msg: "Order not found" });
+      return res.status(404).json({ success: false, msg: "Order not found" });
     }
 
-    // console.log("My Order", order)
-    // // Check if the order has already been sent to ShipRocket
+    // Check if the order has already been sent to ShipRocket
     if (order?.sentToShipRocket) {
       return res.status(400).json({
         success: false,
@@ -296,9 +301,7 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
       image: `https://api.manovaidya.com//uploads/products${item.productId?.productImages[0]}`,
     }));
 
-    // console.log('order?.orderItems:', order.shippingAddress)
-
-    // // Fetch token from ShipRocket
+    // Fetch token from ShipRocket
     const loginResponse = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
@@ -308,49 +311,12 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
     );
 
     const token = loginResponse.data.token;
-    // console.log('token:-:-:-', token)
-    // // Prepare the data for ShipRocket
-    // const originalDate = new Date().toISOString();
-    // const formattedDate = new Date(originalDate).toLocaleDateString("en-GB"); // "29/04/2025"
+
+    // Prepare the data for ShipRocket
     const order_date = new Date().toISOString().split("T")[0];
 
-    // const data = {
-    //   order_id: id,
-    //   order_date: order_date,
-    //   pickup_location: "warehouse",
-    //   billing_customer_name: order.shippingAddress.fullName,
-    //   billing_last_name: "",
-    //   billing_address: order.shippingAddress.addressLine1,
-    //   billing_address_2: order.shippingAddress.addressLine2,
-    //   // order.shippingAddress.city
-    //   billing_city: "Gwaliior",
-    //   // order.shippingAddress.pinCode
-    //   billing_pincode: "474001",
-    //   // order.shippingAddress.state
-    //   billing_state: "Madhya Pradesh",
-    //   billing_country: "India",
-    //   billing_email: order.shippingAddress.email,
-    //   billing_phone: order.shippingAddress.phone,
-    //   shipping_is_billing: true,
-    //   order_items: orderItemsArray,
-    //   payment_method: order.paymentMethod,
-    //   shipping_charges: parseFloat(order.shippingAmount) || 0,
-    //   giftwrap_charges: 0,
-    //   transaction_charges: 0,
-    //   total_discount: parseFloat(order.couponDiscount) || 0,
-    //   sub_total: parseFloat(order.totalAmount),
-    //   length: Number(length),
-    //   breadth: Number(breadth),
-    //   height: Number(height),
-    //   weight: Number(weight),
-    //   order_type: "NON ESSENTIALS"
-
-    // };
-
-
-
     const data = {
-      order_id: id,
+      order_id: id, // Use the MongoDB ObjectId as the order ID
       order_date: order_date,
       pickup_location: "warehouse",
       comment: "Handle with care. Deliver between 9 AM - 6 PM.",
@@ -359,18 +325,18 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
       billing_customer_name: order.shippingAddress.fullName,
       billing_last_name: "",
       billing_address: order.shippingAddress.addressLine1,
-      billing_address_2: order.shippingAddress.addressLine2,
+      billing_address_2: order.shippingAddress.addressLine2 || "",
       billing_isd_code: "+91",
-      billing_city: "Gwaliior",
-      billing_pincode: "474001",
-      billing_state: "Madhya Pradesh",
+      billing_city: order.shippingAddress.city || "Gwalior", // Use actual city from the address
+      billing_pincode: order.shippingAddress.pinCode || "474001", // Use actual pincode from the address
+      billing_state: order.shippingAddress.state || "Madhya Pradesh", // Use actual state
       billing_country: "India",
-      billing_email: "gridharkumar@gmail.com",
+      billing_email: order.shippingAddress.email,
       billing_phone: order.shippingAddress.phone,
       billing_alternate_phone: "",
       shipping_is_billing: true,
       order_items: orderItemsArray,
-      payment_method: order.paymentMethod, 
+      payment_method: order.paymentMethod,
       shipping_charges: parseFloat(order.shippingAmount) || 0,
       giftwrap_charges: 0,
       transaction_charges: 0,
@@ -386,17 +352,18 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
       order_type: "NON ESSENTIALS",
     };
 
+    // Send data to ShipRocket to create the order
     const response = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       data,
       {
         headers: {
-          // 'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       }
     );
 
+    // Mark the order as sent to ShipRocket
     order.sentToShipRocket = true;
     await order.save();
 
@@ -404,11 +371,15 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
       .status(200)
       .json({ success: true, msg: "Shipping is Done", data: response.data });
   } catch (error) {
-    // console.error(error);
+    console.error("Error occurred during ShipRocket integration:", error);
+
+    // Log the error response from ShipRocket if available
     if (error.response) {
+      console.error("Error response from ShipRocket:", error.response.data);
       return res.status(error.response.status).json({
         success: false,
         msg: error.response.data.message || "Unknown Error",
+        fullError: error.response.data, // Log full error from ShipRocket for debugging
       });
     } else if (error.request) {
       return res
@@ -417,9 +388,10 @@ router.post("/shiped-order-shiprocket", async (req, res) => {
     } else {
       return res
         .status(500)
-        .json({ success: false, msg: "Internal Server Error" });
+        .json({ success: false, msg: "Internal Server Error", fullError: error });
     }
   }
 });
+
 
 export default router;
