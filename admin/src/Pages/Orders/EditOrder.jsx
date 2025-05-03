@@ -169,26 +169,65 @@ const EditOrder = () => {
         }
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         let body = { length: orderData?.length, id, breadth: orderData.breadth, height: orderData.height, weight: orderData.weight }
+
+    //         const response = await postData('api/shiprocket/shiped-order-shiprocket', body);
+
+    //         console.log(response)
+    //         if (response?.success === true) {
+    //             toast.success('Order successfully submitted to ShipRocket and status updated to Shipped!');
+    //             setStep(1)
+    //         }
+
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error(error?.response?.data?.msg);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        // Ensure we have a valid MongoDB ObjectId (24 characters, hex)
+        if (!id || id.length !== 24) {
+            toast.error("Invalid order ID. Please check the order.");
+            return;
+        }
+    
+        // Convert values to numbers and apply fallback defaults
+        const length = Number(orderData?.length) || 10;
+        const breadth = Number(orderData?.breadth) || 10;
+        const height = Number(orderData?.height) || 10;
+        const weight = Number(orderData?.weight) || 1;
+    
+        // Validate numbers are positive
+        if ([length, breadth, height, weight].some(v => isNaN(v) || v <= 0)) {
+            toast.error("Please enter valid package dimensions (length, breadth, height, weight).");
+            return;
+        }
+    
+        const body = { id, length, breadth, height, weight };
+    
         try {
-            let body = { length: orderData?.length, id, breadth: orderData.breadth, height: orderData.height, weight: orderData.weight }
-
             const response = await postData('api/shiprocket/shiped-order-shiprocket', body);
-
-            console.log(response)
+    
+            console.log("Shiprocket response:", response);
             if (response?.success === true) {
                 toast.success('Order successfully submitted to ShipRocket and status updated to Shipped!');
-                setStep(1)
+                setStep(1);
+            } else {
+                toast.error(response?.msg || 'Failed to submit order to ShipRocket.');
             }
-
+    
         } catch (error) {
-            console.log(error);
-            toast.error(error?.response?.data?.msg);
+            console.error("Shiprocket API error:", error);
+            toast.error(error?.response?.data?.msg || 'An unexpected error occurred while submitting the order.');
         }
     };
-
-
+    
 
     return (
         <>
