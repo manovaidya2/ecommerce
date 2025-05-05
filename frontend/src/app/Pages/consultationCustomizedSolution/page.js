@@ -152,7 +152,7 @@ const page = () => {
   // Razorpay payment handling
   const handleRzrpPayment = async () => {
     const options = {
-      key: "rzp_test_GQ6XaPC6gMPNwH",
+      key: "rzp_live_evRmFgAVflHNJ5",
       amount: 1599 * 100,
       currency: "INR",
       name: "manovaidya",
