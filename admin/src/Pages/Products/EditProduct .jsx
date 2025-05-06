@@ -142,51 +142,73 @@ const EditProduct = () => {
     };
 
     console.log("XXXXXXXXdd", formData.Variant)
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
-        // Validation for product images
+    
+        // ✅ Validation for product images
         if (formData?.productImage?.length < 0 || formData?.productImage?.length > 8) {
             alert("Please select between 3 to 8 images before submitting.");
             setIsLoading(false);
             return;
         }
-
+    
+        // ✅ CLEAN the Variant array
+        const cleanedVariants = formData.Variant.map(v => ({
+            ...v,
+            tagType: v.tagType && v.tagType !== '' ? v.tagType : null,
+        }));
+        
+    
+        const cleanedFormData = {
+            ...formData,
+            Variant: cleanedVariants,
+        };
+        
+    
         const form = new FormData();
-        Object.keys(formData).forEach((key) => {
+        Object.keys(cleanedFormData).forEach((key) => {
             if (key === "Variant" || key === "herbsId" || key === "faqs" || key === "urls" || key === 'RVUS') {
-                form.append(key, JSON.stringify(formData[key]));
-            } else if (key === "productImage") {
-                formData.productImage.forEach((file) => form.append("productImages", file));
+                form.append(key, JSON.stringify(cleanedFormData[key]));
+            }
+            
+       
+         else if (key === "productImage") {
+                cleanedFormData.productImage.forEach((file) => form.append("productImages", file));
             } else if (key === "blogImage") {
-                formData.blogImage.forEach((file) => form.append("blogImages", file));
+                cleanedFormData.blogImage.forEach((file) => form.append("blogImages", file));
             } else if (key === "oldBlogImage") {
-                formData?.oldBlogImage?.forEach((file) => form?.append("oldBlogImages", file));
+                cleanedFormData?.oldBlogImage?.forEach((file) => form?.append("oldBlogImages", file));
             } else if (key === "oldProductImage") {
-                formData.oldProductImage.forEach((file) => form.append("oldProductImages", file));
+                cleanedFormData.oldProductImage.forEach((file) => form.append("oldProductImages", file));
             } else {
-                form.append(key, formData[key]);
+                form.append(key, cleanedFormData[key]);
             }
         });
-
-
+    
         try {
             const response = await postData(`api/products/update-product/${id}`, form);
-            console.log("responseresponse", response)
-            if (response.success === true) {
-                toast.success("Product Update successfully!");
-
+            console.log("responseresponse", response);
+    
+            if (response && response.success === true) {
+                toast.success("Product updated successfully!");
                 navigate("/all-products");
+            } else if (response && response.success === false) {
+                toast.error(response.message || "Failed to update product. Please check your input.");
+            } else {
+                toast.error("No valid response from server. Please check backend logs.");
             }
-
         } catch (error) {
-            console.error(error);
-            toast.error("Failed to update product. Please try again.");
+            console.error("Error in handleSubmit:", error);
+            toast.error("Network or backend error. Check server logs.");
         } finally {
             setIsLoading(false);
         }
     };
+    
+   
 
 
     const handleImageChange = (e) => {

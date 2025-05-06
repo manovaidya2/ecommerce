@@ -232,7 +232,17 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
     }
 
     // Construct the Variant array
-    const variants = parsedVariants.map((v) => ({ price: parseFloat(v.price) || 0, discountPrice: parseFloat(v.discountPrice) || 0, finalPrice: parseFloat(v.finalPrice).toFixed(2) || '0.00', day: v.day || '', bottle: v.bottle || '', tex: v.tex || '0', tagType: v.tagType || '' }));
+    // Construct the Variant array
+const variants = parsedVariants.map((v) => ({
+  price: parseFloat(v.price) || 0,
+  discountPrice: parseFloat(v.discountPrice) || 0,
+  finalPrice: parseFloat(v.finalPrice).toFixed(2) || '0.00',
+  day: v.day || '',
+  bottle: v.bottle || '',
+  tex: v.tex || '0',
+  tagType: v.tagType && v.tagType !== '' ? v.tagType : null, // FIX HERE: null if empty
+}));
+
 
     const herbsArray = parsedHerbs || []; 
 
