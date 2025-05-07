@@ -111,19 +111,19 @@ const Page = ({ title }) => {
       </section>
 
       <section className="sidewhatsapp">
-        <a target="_blank" href="https://wa.me/+919131734930" rel="noopener noreferrer">
+        <a target="_blank" href="https://wa.me/+917823838638" rel="noopener noreferrer">
           <i className="bi bi-whatsapp"></i>
         </a>
       </section>
 
       <section className="sidecall">
-        <a href="tel:+919131734930">
+        <a href="tel:+917823838638">
           <i className="bi bi-telephone"></i>
         </a>
       </section>
 
       <section className="sideInstagram">
-        <a href="https://www.instagram.com/silent_lover_aasib_mp07" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/manovaidya/?next=%2F" target="_blank" rel="noopener noreferrer">
           <i className="bi bi-instagram"></i>
         </a>
       </section>

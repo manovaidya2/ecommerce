@@ -118,15 +118,8 @@ const page = () => {
         </div>
       </footer>
       <div className="bottom-footer">
-        © {new Date().getFullYear()} MANOVAIDYA All Rights Reserved. by{" "}
-        <a
-          style={{ color: 'var(--yellow)', textDecoration: 'none' }}
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.digiindiasolutions.com/"
-        >
-          Digi India Solutions
-        </a>
+        © {new Date().getFullYear()} MANOVAIDYA All Rights Reserved. 
+       
       </div>
 
     </>
