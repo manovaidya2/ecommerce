@@ -213,13 +213,20 @@
 .product-overview-bg {
   background-image: url("../../Images/banner-bg-hero.png");
   width: 100%;
-  height: 70vh;
+  min-height: 60vh;
   padding: 2rem;
   background-position: center;
-  background-size: cover;
+  background-size: 100% auto;    /* 👈 NEW: fit the full height */
   background-repeat: no-repeat;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;  
+  box-sizing: border-box;
 }
+
+
 
 .product-overview-bg button {
   position: absolute;
@@ -422,16 +429,19 @@
 
   .product-overview-bg {
     width: 100%;
-    height: 120px;
-    margin-top: 1rem;
+    min-height: auto;
+    padding: 2rem 1rem;
+    background-image: url('../../Images/banner-bg-hero.png'); /* ✅ Your vertical mobile image */
+    background-size: cover; /* ✅ fills full width and adjusts height */
+    background-position: center top; /* ✅ keeps it aligned from the top */
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 
-  .health-card-image {
-    width: 70px;
-    height: 70px;
-    border-radius: 0%;
-    border: none;
-  }
 
   .Mental-card-main {
     padding: 10px 5px;
@@ -467,8 +477,8 @@
 
   .product-overview-bg {
     background-image: url("../../Images/banner-bg-mobile.png");
-    width: 100%;
-    height: 55vh;
+   /* width: 100%;*/
+    height: 60vh;
     object-fit: contain;
   }
 
@@ -482,4 +492,73 @@
     object-fit: cover;
   }
 
+}
+
+
+/* ✅ For 1200px and below */
+@media (max-width: 1290px) {
+  .product-overview-bg {
+    min-height: 50vh; /* 🔄 more height to maintain ratio */
+    background-size: 100% auto; /* ✅ fill width, keep aspect ratio */
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* ✅ For 1080px and below */
+@media (max-width: 1080px) {
+  .product-overview-bg {
+    min-height: 50vh;
+    background-size: 100% auto; /* ✅ full width, maintain aspect */
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+
+
+
+/* ✅ For 992px and below: tablets */
+@media (max-width: 992px) {
+  .product-overview-bg {
+    min-height: 40vh; /* keep height */
+    background-size: 100%; /* ✅ ✅ ✅ full cover, no gap top/bottom */
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+
+/* ✅ For mobile: 576px and below */
+@media (max-width: 576px) {
+  .product-overview-bg {
+    min-height: auto;
+    background-size: 100% auto; /* ✅ same: fill width, auto height */
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
 }

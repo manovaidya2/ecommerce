@@ -97,6 +97,23 @@
   transition: left 0.3s ease;
   z-index: 1000;
 }
+
+/* Sidebar submenu links */
+.sidebar-sub-link {
+  color: white !important;    
+  transition: color 0.3s ease;   
+}
+
+.sidebar-sub-link:hover {
+  color: #f0f0f0;                
+  text-decoration: underline;    
+}
+
+
+
+
+
+
 .sidebar.active {
   left: 0;
 }

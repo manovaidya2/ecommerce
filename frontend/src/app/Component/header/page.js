@@ -27,6 +27,10 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const dispatch = useDispatch()
   const { carts } = useSelector(state => state.user);
+  const [categories, setCategories] = useState([]);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
+
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -93,7 +97,21 @@ const Page = () => {
     };
     fetchCoupon();
   }, []);
-
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getData('api/categories/get-All-category');
+        if (response.success === true) {
+          const activecategories = response?.categories.filter(categorie => categorie.isActive === true);
+          setCategories(activecategories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+  
 
   const settings = {
     dots: false,
@@ -263,42 +281,106 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Sidebar */}
-      <div className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
-        <div className="close-btn" onClick={toggleSidebar}>
-          <Image className="sidebar-logo" src={sidebarLogo} alt="logo-main" />
-          <i className="bi bi-x-octagon"></i>
-        </div>
-        <ul>
-          {navItems.map((item, index) => (
-            <li key={index}>
-              <Link href={item.link} onClick={toggleSidebar}>
-                {item.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+{/* Sidebar */}
+<div className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
+  <div className="close-btn" onClick={toggleSidebar}>
+    <Image className="sidebar-logo" src={sidebarLogo} alt="logo-main" />
+    <i className="bi bi-x-octagon"></i>
+  </div>
 
-      {/* Navbar */}
-      <nav className="navbar">
-        <div>
-          <div className="d-flex align-items-center">
-            <ul className="nav">
-              {navItems.map((item, index) => (
-                <li key={index} className="nav-item">
-                  <Link href={item.link} className="nav-link">
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div>
-              <Image src={logo1} width={130} alt="logo-main" />
+  <ul>
+    {navItems.map((item, index) => {
+      if (item.name === "explore-By-Diseases") {
+        return (
+          <li key={index} className="mt-2">
+            <div
+              className="fw-bold d-flex justify-content-between align-items-center"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setIsExploreOpen(prev => !prev)}
+            >
+              {item.name}
+              <i className={`bi ${isExploreOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} />
             </div>
-          </div>
-        </div>
-      </nav>
+            {isExploreOpen && (
+              <ul className="list-unstyled ms-3 mt-1">
+                {categories.map((category, catIndex) => (
+                  <li key={catIndex}>
+                    <Link
+                      href={`/Pages/product-tips/${category._id}`}
+                      onClick={toggleSidebar}
+                      className="small text-white sidebar-sub-link"
+                    >
+                      - {category.categoryName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      } else {
+        return (
+          <li key={index}>
+            <Link href={item.link} onClick={toggleSidebar}>
+              {item.name}
+            </Link>
+          </li>
+        );
+      }
+    })}
+  </ul>
+</div>
+
+{/* Navbar */}
+<nav className="navbar">
+  <div>
+    <div className="d-flex align-items-center">
+      <ul className="nav">
+        {navItems.map((item, index) => {
+          if (item.name === "explore-By-Diseases") {
+            return (
+              <li key={index} className="nav-item dropdown">
+                <Link
+                  href="#"
+                  className="nav-link dropdown-toggle"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {item.name}
+                </Link>
+                <ul className="dropdown-menu">
+                  {categories.map((category, catIndex) => (
+                    <li key={catIndex}>
+                      <Link
+                        href={`/Pages/product-tips/${category._id}`}
+                        className="dropdown-item"
+                      >
+                        {category.categoryName}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          } else {
+            return (
+              <li key={index} className="nav-item">
+                <Link href={item.link} className="nav-link">
+                  {item.name}
+                </Link>
+              </li>
+            );
+          }
+        })}
+      </ul>
+      <div>
+        <Image src={logo1} width={130} alt="logo-main" />
+      </div>
+    </div>
+  </div>
+</nav>
+
     </>
   );
 };
