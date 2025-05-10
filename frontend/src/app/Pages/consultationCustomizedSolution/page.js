@@ -28,7 +28,7 @@ import { getData, postData, serverURL } from "@/app/services/FetchNodeServices";
 import Review from "@/app/Pages/review/page";
 const page = () => {
   const { error, isLoading, Razorpay } = useRazorpay();
-  const [formData, setFormData] = useState({ chooseDoctor: '', scheduleTime: '10-12 AM', scheduleCalendar: '', patientName: '', concernChallenge: '', email: '', totalAmount: 1599 });
+  const [formData, setFormData] = useState({ chooseDoctor: '', scheduleTime: '10-12 AM', scheduleCalendar: '', patientName: '', concernChallenge: '', email: '', totalAmount: 499 });
   const [user_data, setUser_data] = useState(null)
   const [urls, setUrls] = useState([])
   const modalCloseButton = useRef(null)
@@ -153,7 +153,7 @@ const page = () => {
   const handleRzrpPayment = async () => {
     const options = {
       key: "rzp_live_evRmFgAVflHNJ5",
-      amount: 1599 * 100,
+      amount: 499 * 100,
       currency: "INR",
       name: "manovaidya",
       description: "Test Transaction",
@@ -233,7 +233,7 @@ const page = () => {
       scheduleCalendar: formData.scheduleCalendar,
       scheduleTime: formData.scheduleTime,
       chooseDoctor: formData.chooseDoctor,
-      totalAmount: formData.totalAmount || 1599,
+      totalAmount: formData.totalAmount || 499,
     };
 
     console.log('Payload:', payload);
@@ -440,10 +440,24 @@ const page = () => {
                             value={formData.scheduleTime}
                             onChange={handleChange}
                           >
-                            <option value="10-12 AM">10-12 AM</option>
-                            <option value="12-02 PM">12-02 PM</option>
-                            <option value="02-04 PM">02-04 PM</option>
-                            <option value="04-06 PM">04-06 PM</option>
+                            <option value="11:00 AM - 11:30 AM">11:00 AM - 11:30 AM</option>
+<option value="11:30 AM - 12:00 PM">11:30 AM - 12:00 PM</option>
+<option value="12:00 PM - 12:30 PM">12:00 PM - 12:30 PM</option>
+<option value="12:30 PM - 01:00 PM">12:30 PM - 01:00 PM</option>
+<option value="01:00 PM - 01:30 PM">01:00 PM - 01:30 PM</option>
+
+<option value="02:00 PM - 02:30 PM">02:00 PM - 02:30 PM</option>
+<option value="02:30 PM - 03:00 PM">02:30 PM - 03:00 PM</option>
+<option value="03:00 PM - 03:30 PM">03:00 PM - 03:30 PM</option>
+<option value="03:30 PM - 04:00 PM">03:30 PM - 04:00 PM</option>
+<option value="04:00 PM - 04:30 PM">04:00 PM - 04:30 PM</option>
+<option value="04:30 PM - 05:00 PM">04:30 PM - 05:00 PM</option>
+<option value="05:00 PM - 05:30 PM">05:00 PM - 05:30 PM</option>
+<option value="05:30 PM - 06:00 PM">05:30 PM - 06:00 PM</option>
+<option value="06:00 PM - 06:30 PM">06:00 PM - 06:30 PM</option>
+<option value="06:30 PM - 07:00 PM">06:30 PM - 07:00 PM</option>
+{/* <option value="07:00 PM - 07:30 PM">07:00 PM - 07:30 PM</option>
+<option value="07:30 PM - 08:00 PM">07:30 PM - 08:00 PM</option> */}
                           </select>
                         </div>
                       </div>
@@ -480,7 +494,7 @@ const page = () => {
                       </div>
                     </div>
                     <div className="modal-footer">
-                      <p className="price">₹ {formData.totalAmount || 1599}</p>
+                      <p className="price">₹ {formData.totalAmount || 499}</p>
                       <button type="submit" className="consultNow">
                         Pay Now
                       </button>
